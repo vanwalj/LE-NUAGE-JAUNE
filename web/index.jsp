@@ -13,6 +13,7 @@
   </head>
   <body>
     <video autoplay=""></video>
+    <img src="http://blog-mastere2-rp-events.ecs-paris.com/wp-content/uploads/2014/04/poney-rose.jpg"/>
   </body>
 <script>
 
