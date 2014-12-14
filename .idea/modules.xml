@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/CCAE.iml" filepath="$PROJECT_DIR$/CCAE.iml" />
+      <module fileurl="file://$PROJECT_DIR$/nuage.iml" filepath="$PROJECT_DIR$/nuage.iml" />
     </modules>
   </component>
 </project>

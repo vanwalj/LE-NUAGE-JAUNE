@@ -1,0 +1,4 @@
+com/napalm/nuage/Constants.class
+com/napalm/nuage/NuageAPI.class
+com/napalm/nuage/DatastoreManager.class
+com/napalm/nuage/NuageUser.class
