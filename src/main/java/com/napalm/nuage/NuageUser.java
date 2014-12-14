@@ -194,7 +194,7 @@ public class NuageUser {
         this.usageSave = usageSave;
     }
 
-    public APIUsage getCurrentUsage()
+    public APIUsage currentUsage()
     {
         Long totalCounter = new Long(0);
         totalCounter += this.getUsageSave();
@@ -212,6 +212,7 @@ public class NuageUser {
         }
         return result;
     }
+
 
     private Long getStoredUsageForKey(String key)
     {

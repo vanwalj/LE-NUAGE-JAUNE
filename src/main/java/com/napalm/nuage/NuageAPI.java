@@ -4,6 +4,7 @@ import com.google.api.server.spi.config.Api;
 import com.google.api.server.spi.config.ApiMethod;
 import com.google.api.server.spi.response.ForbiddenException;
 import com.google.appengine.api.users.User;
+import redis.clients.jedis.Jedis;
 
 import javax.inject.Named;
 import java.math.BigInteger;
@@ -93,7 +94,7 @@ public class NuageAPI {
         if (currentUser == null) {
             throw new com.google.api.server.spi.response.ForbiddenException("User " + user.getEmail() + " is not registered");
         }
-        return currentUser.getCurrentUsage();
+        return currentUser.currentUsage();
     }
 
 }

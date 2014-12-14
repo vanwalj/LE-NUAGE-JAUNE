@@ -1,6 +1,6 @@
 {
  "kind": "discovery#rpcDescription",
- "etag": "\"9mnLCPwbyZOHH18t8ExzO2gqgTk/Kf5LSRHCmi_LvrxaEKCT1sCLoYc\"",
+ "etag": "\"9mnLCPwbyZOHH18t8ExzO2gqgTk/7JU7A19_CJS8BGOoBDIWbgl643U\"",
  "discoveryVersion": "v1",
  "id": "nuageAPI:v1",
  "name": "nuageAPI",
@@ -100,9 +100,6 @@
      "items": {
       "type": "string"
      }
-    },
-    "currentUsage": {
-     "$ref": "APIUsage"
     },
     "email": {
      "type": "string"
