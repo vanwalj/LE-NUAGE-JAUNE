@@ -67,6 +67,7 @@ public class NuageUser {
 
     public void store()
     {
+        addStoredKey(this.getAPIKey());
         update();
         sendWelcomeMail();
     }

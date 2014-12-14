@@ -88,7 +88,7 @@ public class NuageAPI {
     }
 
     @ApiMethod(name = "apiUsage", path = "user/usage", httpMethod = ApiMethod.HttpMethod.GET)
-    public APIUsage APIUsage(User user) throws ForbiddenException
+    public APIUsage apiUsage(User user) throws ForbiddenException
     {
         NuageUser currentUser = NuageUser.getNuageUserWithEmail(user.getEmail());
         if (currentUser == null) {
