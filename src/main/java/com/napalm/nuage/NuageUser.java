@@ -165,6 +165,7 @@ public class NuageUser {
         this.setUsageSave(this.getUsageSave() + storedUsageForKey(CORS));
         deleteStoredKey(CORS);
         this.CORSList.remove(CORS);
+        update();
         DatastoreService datastore = DatastoreManager.getInstance().getDatastore();
         try {
             Entity user = datastore.get(KeyFactory.createKey("NuageUser", email));
