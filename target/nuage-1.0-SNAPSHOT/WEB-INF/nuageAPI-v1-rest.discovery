@@ -1,6 +1,6 @@
 {
  "kind": "discovery#restDescription",
- "etag": "\"9mnLCPwbyZOHH18t8ExzO2gqgTk/7JU7A19_CJS8BGOoBDIWbgl643U\"",
+ "etag": "\"9mnLCPwbyZOHH18t8ExzO2gqgTk/BanjSTxgQfYgtQ7GqLaOTA4UFR8\"",
  "discoveryVersion": "v1",
  "id": "nuageAPI:v1",
  "name": "nuageAPI",
@@ -111,6 +111,31 @@
      "format": "int64"
     }
    }
+  },
+  "SourceUsage": {
+   "id": "SourceUsage",
+   "type": "object",
+   "properties": {
+    "name": {
+     "type": "string"
+    },
+    "value": {
+     "type": "string",
+     "format": "int64"
+    }
+   }
+  },
+  "SourceUsageCollection": {
+   "id": "SourceUsageCollection",
+   "type": "object",
+   "properties": {
+    "items": {
+     "type": "array",
+     "items": {
+      "$ref": "SourceUsage"
+     }
+    }
+   }
   }
  },
  "methods": {
@@ -157,6 +182,17 @@
    "parameterOrder": [
     "cors"
    ],
+   "scopes": [
+    "https://www.googleapis.com/auth/userinfo.email"
+   ]
+  },
+  "detailedUsage": {
+   "id": "nuageAPI.detailedUsage",
+   "path": "user/detailedUsage",
+   "httpMethod": "GET",
+   "response": {
+    "$ref": "SourceUsageCollection"
+   },
    "scopes": [
     "https://www.googleapis.com/auth/userinfo.email"
    ]

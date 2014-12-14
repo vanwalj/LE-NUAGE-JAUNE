@@ -15,23 +15,13 @@ public class DatastoreManager {
     }
 
     private DatastoreService datastore = null;
-    private Jedis jedis = null;
 
     private DatastoreManager() {
         this.datastore = DatastoreServiceFactory.getDatastoreService();
-        this.jedis = new Jedis("130.211.109.210");
     }
 
     public DatastoreService getDatastore()
     {
         return datastore;
-    }
-
-    public Jedis getJedis() {
-        return jedis;
-    }
-
-    public void setJedis(Jedis jedis) {
-        this.jedis = jedis;
     }
 }

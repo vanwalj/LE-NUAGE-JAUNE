@@ -6,9 +6,9 @@ package com.napalm.nuage;
 public class SourceUsage {
 
     private String name;
-    private Integer value;
+    private Long value;
 
-    public SourceUsage(String name, Integer value)
+    public SourceUsage(String name, Long value)
     {
         this.name = name;
         this.value = value;
@@ -22,11 +22,11 @@ public class SourceUsage {
         this.name = name;
     }
 
-    public Integer getValue() {
+    public Long getValue() {
         return value;
     }
 
-    public void setValue(Integer value) {
+    public void setValue(Long value) {
         this.value = value;
     }
 }

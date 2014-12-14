@@ -7,9 +7,11 @@ import com.google.appengine.api.users.User;
 import redis.clients.jedis.Jedis;
 
 import javax.inject.Named;
+import javax.xml.transform.Source;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -95,6 +97,22 @@ public class NuageAPI {
             throw new com.google.api.server.spi.response.ForbiddenException("User " + user.getEmail() + " is not registered");
         }
         return currentUser.currentUsage();
+    }
+
+    @ApiMethod(name = "detailedUsage", path = "user/detailedUsage", httpMethod = ApiMethod.HttpMethod.GET)
+    public List<SourceUsage> detailedUsage(User user) throws ForbiddenException {
+        List<SourceUsage> detailedUsageList = new ArrayList<>();
+        NuageUser currentUser = NuageUser.getNuageUserWithEmail(user.getEmail());
+        if (currentUser == null) {
+            throw new com.google.api.server.spi.response.ForbiddenException("User " + user.getEmail() + " is not registered");
+        }
+        detailedUsageList.add(new SourceUsage(currentUser.getAPIKey(), currentUser.storedUsageForKey(currentUser.getAPIKey())));
+        detailedUsageList.add(new SourceUsage("Deleted sources", currentUser.getUsageSave()));
+        for (String CORS : currentUser.getCORSList())
+        {
+            detailedUsageList.add(new SourceUsage(CORS, currentUser.storedUsageForKey(CORS)));
+        }
+        return detailedUsageList;
     }
 
 }

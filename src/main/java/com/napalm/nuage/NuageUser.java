@@ -1,6 +1,7 @@
 package com.napalm.nuage;
 
 import com.google.appengine.api.datastore.*;
+import redis.clients.jedis.Jedis;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -161,7 +162,7 @@ public class NuageUser {
 
     public void deleteCors(String CORS)
     {
-        this.setUsageSave(this.getUsageSave() + getStoredUsageForKey(CORS));
+        this.setUsageSave(this.getUsageSave() + storedUsageForKey(CORS));
         deleteStoredKey(CORS);
         this.CORSList.remove(CORS);
         DatastoreService datastore = DatastoreManager.getInstance().getDatastore();
@@ -179,7 +180,7 @@ public class NuageUser {
 
     public void resetAPIKey()
     {
-        this.setUsageSave(this.getUsageSave() + getStoredUsageForKey(this.getAPIKey()));
+        this.setUsageSave(this.getUsageSave() + storedUsageForKey(this.getAPIKey()));
         deleteStoredKey(this.getAPIKey());
         this.setAPIKey(new BigInteger(130, new SecureRandom()).toString());
         addStoredKey(this.getAPIKey());
@@ -206,28 +207,30 @@ public class NuageUser {
     private Long getStoredUsage()
     {
         Long result = new Long(0);
-        result += getStoredUsageForKey(this.getAPIKey());
+        result += storedUsageForKey(this.getAPIKey());
         for (String CORS : this.getCORSList())
         {
-            result += getStoredUsageForKey(CORS);
+            result += storedUsageForKey(CORS);
         }
         return result;
     }
 
-
-    private Long getStoredUsageForKey(String key)
+    public Long storedUsageForKey(String key)
     {
-        Long result = new Long(DatastoreManager.getInstance().getJedis().get(key));
+        Jedis jedis = new Jedis("130.211.109.210");
+        Long result = new Long(jedis.get(key));
         return result;
     }
 
     private void deleteStoredKey(String key)
     {
-        DatastoreManager.getInstance().getJedis().del(key);
+        Jedis jedis = new Jedis("130.211.109.210");
+        jedis.del(key);
     }
 
     private void addStoredKey(String key)
     {
-        DatastoreManager.getInstance().getJedis().set(key, "0");
+        Jedis jedis = new Jedis("130.211.109.210");
+        jedis.set(key, "0");
     }
 }
