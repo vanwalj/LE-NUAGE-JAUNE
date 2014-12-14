@@ -24,14 +24,14 @@ import java.util.ArrayList;
 public class NuageAPI {
 
     @ApiMethod(name = "helloWorld", path = "helloworld", httpMethod = ApiMethod.HttpMethod.GET)
-    public String helloWorld()
+    public HelloWorld helloWorld()
     {
-        return "hello world";
+        return new HelloWorld("hello world");
     }
 
     @ApiMethod(name = "helloWorld2", path = "helloworld2", httpMethod = ApiMethod.HttpMethod.GET)
-    public String helloWorld2(User user) throws ForbiddenException {
-        return "hello world 2";
+    public HelloWorld helloWorld2(User user) throws ForbiddenException {
+        return new HelloWorld("hello world " + user.getEmail());
     }
 
     @ApiMethod(name = "signUp", path = "signup", httpMethod = ApiMethod.HttpMethod.POST)
@@ -49,7 +49,7 @@ public class NuageAPI {
     public NuageUser logIn(User user) throws ForbiddenException {
         NuageUser currentUser = NuageUser.getNuageUserWithEmail(user.getEmail());
         if (currentUser == null) {
-            signUp(user);
+            currentUser = signUp(user);
         }
         return currentUser;
     }
