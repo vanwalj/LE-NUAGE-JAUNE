@@ -5,18 +5,18 @@ package com.napalm.nuage;
  */
 public class APIUsage {
 
-    private Integer APIUsage;
+    private Long APIUsage;
 
-    public APIUsage(Integer value)
+    public APIUsage(Long value)
     {
         this.APIUsage = value;
     }
 
-    public Integer getAPIUsage() {
+    public Long getAPIUsage() {
         return APIUsage;
     }
 
-    public void setAPIUsage(Integer APIUsage) {
+    public void setAPIUsage(Long APIUsage) {
         this.APIUsage = APIUsage;
     }
 }

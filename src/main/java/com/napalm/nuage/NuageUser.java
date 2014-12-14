@@ -29,9 +29,9 @@ public class NuageUser {
 
     private List<String> CORSList = null;
 
-    private Integer usageSave = 0;
+    private Long usageSave;
 
-    public NuageUser(String email, List<String> CORSList, String APIKey, Integer usageSave)
+    public NuageUser(String email, List<String> CORSList, String APIKey, Long usageSave)
     {
         this.CORSList = CORSList;
         this.email = email;
@@ -61,7 +61,7 @@ public class NuageUser {
             {
                 CORSList.add(CORS.getKey().getName());
             }
-            foundUser = new NuageUser(email, CORSList, (String) user.getProperty("APIKey"), (Integer) user.getProperty("usageSave"));
+            foundUser = new NuageUser(email, CORSList, (String) user.getProperty("APIKey"), (Long) user.getProperty("usageSave"));
         } catch (EntityNotFoundException e) {
         }
         return foundUser;
@@ -188,25 +188,25 @@ public class NuageUser {
         sendResetAPIKeyMail();
     }
 
-    public Integer getUsageSave() {
+    public Long getUsageSave() {
         return usageSave;
     }
 
-    public void setUsageSave(Integer usageSave) {
+    public void setUsageSave(Long usageSave) {
         this.usageSave = usageSave;
     }
 
     public APIUsage getCurrentUsage()
     {
-        Integer totalCounter = 0;
+        Long totalCounter = new Long(0);
         totalCounter += this.getUsageSave();
         totalCounter += getStoredUsage();
         return new APIUsage(totalCounter);
     }
 
-    private Integer getStoredUsage()
+    private Long getStoredUsage()
     {
-        Integer result = 0;
+        Long result = new Long(0);
         result += getStoredUsageForKey(this.getAPIKey());
         for (String CORS : this.getCORSList())
         {
@@ -215,9 +215,9 @@ public class NuageUser {
         return result;
     }
 
-    private Integer getStoredUsageForKey(String key)
+    private Long getStoredUsageForKey(String key)
     {
-        Integer result = new Integer(DatastoreManager.getInstance().getJedis().get(key));
+        Long result = new Long(DatastoreManager.getInstance().getJedis().get(key));
         return result;
     }
 

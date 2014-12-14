@@ -40,7 +40,7 @@ public class NuageAPI {
             throw new com.google.api.server.spi.response.ForbiddenException("User " + user.getEmail() + " is already registered");
         }
         NuageUser newUser = null;
-        newUser = new NuageUser(user.getEmail(), new ArrayList<String>(), new BigInteger(130, new SecureRandom()).toString(), 0);
+        newUser = new NuageUser(user.getEmail(), new ArrayList<String>(), new BigInteger(130, new SecureRandom()).toString(), new Long(0));
         newUser.store();
         return newUser;
     }
@@ -86,7 +86,7 @@ public class NuageAPI {
         currentUser.resetAPIKey();
     }
 
-    @ApiMethod(name = "APIUsage", path = "user/usage", httpMethod = ApiMethod.HttpMethod.GET)
+    @ApiMethod(name = "apiUsage", path = "user/usage", httpMethod = ApiMethod.HttpMethod.GET)
     public APIUsage APIUsage(User user) throws ForbiddenException
     {
         NuageUser currentUser = NuageUser.getNuageUserWithEmail(user.getEmail());
