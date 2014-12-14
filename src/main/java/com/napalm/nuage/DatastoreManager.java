@@ -19,7 +19,7 @@ public class DatastoreManager {
 
     private DatastoreManager() {
         this.datastore = DatastoreServiceFactory.getDatastoreService();
-        this.jedis = new Jedis("http://130.211.109.210:7379");
+        this.jedis = new Jedis("130.211.109.210:7379");
     }
 
     public DatastoreService getDatastore()
