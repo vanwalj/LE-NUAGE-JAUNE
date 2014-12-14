@@ -2,6 +2,7 @@ package com.napalm.nuage;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import redis.clients.jedis.Jedis;
 
 /**
  * Created by Valentin on 13/12/14.
@@ -14,13 +15,23 @@ public class DatastoreManager {
     }
 
     private DatastoreService datastore = null;
+    private Jedis jedis = null;
 
     private DatastoreManager() {
-        datastore = DatastoreServiceFactory.getDatastoreService();
+        this.datastore = DatastoreServiceFactory.getDatastoreService();
+        this.jedis = new Jedis("http://130.211.109.210:7379");
     }
 
     public DatastoreService getDatastore()
     {
         return datastore;
+    }
+
+    public Jedis getJedis() {
+        return jedis;
+    }
+
+    public void setJedis(Jedis jedis) {
+        this.jedis = jedis;
     }
 }

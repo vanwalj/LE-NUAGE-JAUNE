@@ -2,8 +2,21 @@ package com.napalm.nuage;
 
 import com.google.appengine.api.datastore.*;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.Properties;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
+import javax.xml.crypto.Data;
 
 /**
  * Created by Valentin on 13/12/14.
@@ -16,11 +29,14 @@ public class NuageUser {
 
     private List<String> CORSList = null;
 
-    public NuageUser(String email, List<String> CORSList, String APIKey)
+    private Integer usageSave = 0;
+
+    public NuageUser(String email, List<String> CORSList, String APIKey, Integer usageSave)
     {
         this.CORSList = CORSList;
         this.email = email;
         this.APIKey = APIKey;
+        this.usageSave = usageSave;
     }
 
     public String getEmail()
@@ -45,7 +61,7 @@ public class NuageUser {
             {
                 CORSList.add(CORS.getKey().getName());
             }
-            foundUser = new NuageUser(email, CORSList, (String) user.getProperty("APIKey"));
+            foundUser = new NuageUser(email, CORSList, (String) user.getProperty("APIKey"), (Integer) user.getProperty("usageSave"));
         } catch (EntityNotFoundException e) {
         }
         return foundUser;
@@ -53,9 +69,16 @@ public class NuageUser {
 
     public void store()
     {
+        update();
+        sendWelcomeMail();
+    }
+
+    private void update()
+    {
         Entity userEntity = new Entity("NuageUser", this.getEmail());
 
         userEntity.setProperty("APIKey", this.getAPIKey());
+        userEntity.setProperty("usageSave", this.getUsageSave());
         DatastoreService datastore = DatastoreManager.getInstance().getDatastore();
         datastore.put(userEntity);
 
@@ -66,6 +89,56 @@ public class NuageUser {
             CORSEntitiesList.add(CORSEntity);
         }
         datastore.put(CORSEntitiesList);
+    }
+
+    private void sendWelcomeMail()
+    {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+
+        String msgBody = "Welcome to VATmess " + this.getEmail() + "," + '\r' + '\n' + "Here is your API Key : " + this.getAPIKey() + '\r' + '\n' + "Please keep a safe copy of it.";
+
+        try {
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress("vatmess@gmail.com", "VATmess"));
+            msg.addRecipient(Message.RecipientType.TO,
+                    new InternetAddress(this.getEmail(), this.getEmail()));
+            msg.setSubject("Your VATmess account has been activated");
+            msg.setText(msgBody);
+            Transport.send(msg);
+
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void sendResetAPIKeyMail()
+    {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+
+        String msgBody = "As you requested, your API key has been reset." + '\r' + '\n' + "Here is your new API Key : " + this.getAPIKey() + '\r' + '\n' + "Please keep a safe copy of it.";
+
+        try {
+            Message msg = new MimeMessage(session);
+            msg.setFrom(new InternetAddress("vatmess@gmail.com", "VATmess"));
+            msg.addRecipient(Message.RecipientType.TO,
+                    new InternetAddress(this.getEmail(), this.getEmail()));
+            msg.setSubject("Your VATmess API key has been reset");
+            msg.setText(msgBody);
+            Transport.send(msg);
+
+        } catch (AddressException e) {
+            e.printStackTrace();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     public String getAPIKey() {
@@ -83,11 +156,14 @@ public class NuageUser {
     public void addCors(String CORS)
     {
         this.CORSList.add(CORS);
-        store();
+        addStoredKey(CORS);
+        update();
     }
 
     public void deleteCors(String CORS)
     {
+        this.setUsageSave(this.getUsageSave() + getStoredUsageForKey(CORS));
+        deleteStoredKey(CORS);
         this.CORSList.remove(CORS);
         DatastoreService datastore = DatastoreManager.getInstance().getDatastore();
         try {
@@ -104,6 +180,54 @@ public class NuageUser {
 
     public void resetAPIKey()
     {
+        this.setUsageSave(this.getUsageSave() + getStoredUsageForKey(this.getAPIKey()));
+        deleteStoredKey(this.getAPIKey());
+        this.setAPIKey(new BigInteger(130, new SecureRandom()).toString());
+        addStoredKey(this.getAPIKey());
+        update();
+        sendResetAPIKeyMail();
+    }
 
+    public Integer getUsageSave() {
+        return usageSave;
+    }
+
+    public void setUsageSave(Integer usageSave) {
+        this.usageSave = usageSave;
+    }
+
+    public APIUsage getCurrentUsage()
+    {
+        Integer totalCounter = 0;
+        totalCounter += this.getUsageSave();
+        totalCounter += getStoredUsage();
+        return new APIUsage(totalCounter);
+    }
+
+    private Integer getStoredUsage()
+    {
+        Integer result = 0;
+        result += getStoredUsageForKey(this.getAPIKey());
+        for (String CORS : this.getCORSList())
+        {
+            result += getStoredUsageForKey(CORS);
+        }
+        return result;
+    }
+
+    private Integer getStoredUsageForKey(String key)
+    {
+        Integer result = new Integer(DatastoreManager.getInstance().getJedis().get(key));
+        return result;
+    }
+
+    private void deleteStoredKey(String key)
+    {
+        DatastoreManager.getInstance().getJedis().del(key);
+    }
+
+    private void addStoredKey(String key)
+    {
+        DatastoreManager.getInstance().getJedis().set(key, "0");
     }
 }
